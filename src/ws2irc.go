@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"code.google.com/p/go.net/websocket"
-	"fmt"
+	"log"
 	"net"
 	"strings"
 )
@@ -20,13 +20,13 @@ func (bridge *WS2IRCBridge) ws2irc() {
 		var msg string
 		wsErr := websocket.Message.Receive(bridge.ws, &msg)
 		if wsErr != nil {
-			fmt.Println("Error while reading from WebSocket: ", wsErr)
+			log.Println("Error while reading from WebSocket: ", wsErr)
 			break
 		}
 
 		_, ircErr := writer.WriteString(msg + "\r\n")
 		if ircErr != nil {
-			fmt.Println("Error while writing to IRC: ", ircErr)
+			log.Println("Error while writing to IRC: ", ircErr)
 			break
 		}
 		writer.Flush()
@@ -61,11 +61,11 @@ func (bridge *WS2IRCBridge) run() {
 func wsHandler(ws *websocket.Conn) {
 	ircServerAddr := strings.TrimPrefix(ws.Request().URL.Path, "/")
 
-	fmt.Println("Opening connection to ", ircServerAddr)
+	log.Println("Opening connection to ", ircServerAddr)
 	ircConn, err := net.Dial("tcp", ircServerAddr)
 
 	if err != nil {
-		fmt.Println("Cannot open TCP connection to %s", ircServerAddr)
+		log.Println("Cannot open TCP connection to %s", ircServerAddr)
 		ws.Close()
 	} else {
 		bridge := &WS2IRCBridge{ws: ws, irc: ircConn}
