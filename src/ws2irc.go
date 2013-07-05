@@ -5,7 +5,6 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"log"
 	"net"
-	"strings"
 )
 
 type WS2IRCBridge struct {
@@ -14,6 +13,7 @@ type WS2IRCBridge struct {
 }
 
 func (bridge *WS2IRCBridge) ws2irc() {
+	defer bridge.close()
 	writer := bufio.NewWriter(bridge.irc)
 
 	for {
@@ -31,10 +31,10 @@ func (bridge *WS2IRCBridge) ws2irc() {
 		}
 		writer.Flush()
 	}
-	bridge.close()
 }
 
 func (bridge *WS2IRCBridge) irc2ws() {
+	defer bridge.close()
 	scanner := bufio.NewScanner(bridge.irc)
 
 	for scanner.Scan() {
@@ -45,7 +45,6 @@ func (bridge *WS2IRCBridge) irc2ws() {
 			break
 		}
 	}
-	bridge.close()
 }
 
 func (bridge *WS2IRCBridge) close() {
@@ -55,5 +54,5 @@ func (bridge *WS2IRCBridge) close() {
 
 func (bridge *WS2IRCBridge) run() {
 	go bridge.irc2ws()
-	bridge.ws2irc()
+	bridge.ws2irc()  // this function should be blocking
 }
