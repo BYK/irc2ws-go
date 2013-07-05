@@ -41,7 +41,7 @@ func (bridge *WS2IRCBridge) irc2ws() {
 		msg := scanner.Text()
 		err := websocket.Message.Send(bridge.ws, msg)
 		if err != nil {
-			fmt.Println("Error while writing to WebSocket: ", err)
+			log.Println("Error while writing to WebSocket: ", err)
 			break
 		}
 	}

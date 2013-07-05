@@ -4,7 +4,9 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"flag"
 	"log"
+	"net"
 	"net/http"
+	"strings"
 )
 
 func wsHandler(ws *websocket.Conn) {
@@ -17,7 +19,7 @@ func wsHandler(ws *websocket.Conn) {
 		log.Println("Cannot open TCP connection to %s", ircServerAddr)
 		ws.Close()
 	} else {
-		bridge := &WS2IRCBridge{ws: ws, irc: ircConn}
+		bridge := WS2IRCBridge{ws: ws, irc: ircConn}
 		bridge.run()
 	}
 }
